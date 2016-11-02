@@ -38,3 +38,6 @@ For our task we will use the following:
 
 
 ## Variables in the tidy data set
+
+## Appendix
+I hope you like my explanation :trollface:.
