@@ -60,7 +60,7 @@ run_analysis <- function() {
     # --> already done in loading step
     
     # 5) From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-    tidydata <- data_mean_sd_activity_names %>% group_by(Subject, Activity) %>% summarize_each(funs(mean))
+    tidydata <- data_mean_sd_activity_names %>% group_by(Subject, Activity) %>% summarize_each(funs(mean)) %>% select(-3)
     
     write.table(tidydata, "tidydata.txt")
     return(tidydata)

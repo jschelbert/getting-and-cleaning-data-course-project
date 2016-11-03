@@ -24,7 +24,7 @@ The following files are contained in the repository:
 * **CodeBook.md** contains information about the variables, processing steps and final outcome.
 * **README.md** is this very file you are reading at the moment. It (hopefully) explains all files and the background.
 * **run_analysis.R** is the main working horse. This file does the reading of the supplied data and processing to get the tidy data set.
-* **tidydata.txt** is the product of the script **run_analysis.R** and contains the tidy data set. More precisely it has for every subject and activity the mean of all 
+* **tidydata.txt** is the product of the script **run_analysis.R** and contains the tidy data set. More precisely it has for every subject and activity the mean of all variables in the original data set that contain "mean" or "std" (standard deviation). You can read the file by `tidy_data <- read.table("tidydata.txt")`.
 
 
 ## Prerequisites
