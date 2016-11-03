@@ -32,12 +32,12 @@ For our task we will use the following:
 - `test/subject_test.txt`: Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. 
 
 
-## Variables in the original data
+### Variables in the original data
 The variables in the original data is described in detail in the file `features_info.txt` within the main folder of the data set (`UCI HAR Dataset`).
 
 ## Processing steps to obtain a tidy data set
 We start by reading in the file `features.txt` that contains the column names of the training set and test set files.
-For smoother handling the names we process the names via the following command which strips out unwanded characters and makes every name unique.
+For smoother handling the names we process the names via the following `make.names` command which strips out unwanded characters (to make it R compliant)and makes every name unique.
 ```R
 feature_names <- make.names(names = features_raw[, 2],
                    			 unique = TRUE,
@@ -45,19 +45,20 @@ feature_names <- make.names(names = features_raw[, 2],
 ```
 
 We then load the activity labels that are contained in the file `activity_labels.txt`.
-This data has two columns, the id (column `id`, containing integers) and the activity name (column `activity` read in as a factor).
+This data has two columns, the id (column `id`, containing integers) and the activity name (column `Activity` read in as a factor).
 This is done via the following code.
 ```R
-    activities_raw <- read.table("UCI HAR Dataset/activity_labels.txt",
-            					  sep = " ",
-            					  colClasses = c("integer", "factor"),
-            					  col.names = c("id", "Activity"))
+activities_raw <- read.table("UCI HAR Dataset/activity_labels.txt",
+            				  sep = " ",
+            				  colClasses = c("integer", "factor"),
+            				  col.names = c("id", "Activity"))
 ```
 
 For both the test and training data we do the following. We read in the main data set `train/X_train.txt` (or `test/X_test.txt` respectively) and set the names of the columns to `feature_names` which we generated before.
 
 Then also the test/training labels (file `test/y_test.txt` and `train/y_train.txt`) and performing subjects (file `test/subject_test.txt` and `train/subject_train.txt`) are read in.
 These files basically consist only of one column.
+
 Finally for both test and training set the content of each of the three files is combined into one data frame for training and test data via the following command.
 ```R
 data_test <- cbind(test_subject_raw, test_y_raw, test_X_raw)
@@ -80,22 +81,23 @@ data_mean_sd_activity_names <- left_join(data_mean_sd, activities_raw, by = c("A
 ```
 
 The only remaining step - and the most important one - is to use the data to generate our final tidy data set.
-For this we make use of `dplyr`'s nice chaining capabilities.
+For this we make use of dplyr's nice chaining capabilities.
 First we group the data by subject and activity.
 Then we summarize all remaining columns, i.e. all but `Subject` and `Activity`, each by taking their mean.
-This means that for each combination of subject and activity `dplyr` filters the rows that correspond to that particular combination and then takes the mean of each column.
+This means that for each combination of subject and activity dplyr filters the rows that correspond to that particular combination and then takes the mean of each column.
 The last step is to omit the column `Activity_id` since we do not need it.
 ```R
 tidydata <- data_mean_sd_activity_names %>% group_by(Subject, Activity) %>% summarize_each(funs(mean)) %>% select(-3)
 ```
 
+### Usage of "wide" format
 We decided to opt for a "wide" tidy data format.
-See the discussion in the forum or this very neat blog post that explains the issue.
+See the [discussion](https://www.coursera.org/learn/data-cleaning/discussions/forums/h8cjA78DEeWtFA5RrsHG3Q/threads/-Cjtsip5Eea0DRLrrvCCTQ) in the forum or [this very neat blog post](https://thoughtfulbloke.wordpress.com/2015/09/09/getting-and-cleaning-the-assignment/) that explains the issue.
 One could easily go to the "long" format by using the `reshape2` package's `melt` command:
 ```R
 tidy_data_long <- melt(tidy_data_wide, c(1,2))
 ```
-
+### Reading in the tidy data set
 For reading in the tidy data set just use the standard command.
 ```R
 tidy_data <- read.table("tidydata.txt")
